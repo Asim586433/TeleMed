@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeleMed - Backend Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c6bac;
+            --secondary: #4ca1af;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7f9;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .sidebar {
+            background-color: white;
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark);
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stats-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .stats-card h2 {
+            font-size: 2.5rem;
+            margin: 10px 0;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .table th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .badge-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: normal;
+        }
+        
+        .form-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .notification-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-clinic-medical me-2"></i>
+                TeleMed Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item notification-container">
+                        <a class="nav-link" href="#" id="notificationBtn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user-circle me-1"></i>
+                            Admin User
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3 p-0 sidebar">
+                <div class="p-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="patient-onboarding">
+                                <i class="fas fa-user-injured"></i> Patient Onboarding
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="provider-portal">
+                                <i class="fas fa-user-md"></i> Provider Portal
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="prescription-management">
+                                <i class="fas fa-prescription"></i> Prescriptions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="pharmacy-integration">
+                                <i class="fas fa-pills"></i> Pharmacy Integration
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="billing">
+                                <i class="fas fa-credit-card"></i> Billing & Subscription
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="analytics">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3">
+                            <a class="nav-link" href="admin-training.html" target="_blank">
+                                <i class="fas fa-graduation-cap"></i> Admin Training
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9 p-4">
+                <!-- Dashboard Section -->
+                <div class="section active" id="dashboard">
+                    <h2 class="mb-4">Dashboard</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card stats-card">
+                                <i class="fas fa-user-injured"></i>
+                                <h2>142</h2>
+                                <p>Total Patients</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card">
+                                <i class="fas fa-user-md"></i>
+                                <h2>18</h2>
+                                <p>Healthcare Providers</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card">
+                                <i class="fas fa-calendar-check"></i>
+                                <h2>24</h2>
+                                <p>Today's Appointments</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card">
+                                <i class="fas fa-prescription"></i>
+                                <h2>37</h2>
+                                <p>Pending Prescriptions</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Recent Appointments</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Patient</th>
+                                                    <th>Provider</th>
+                                                    <th>Time</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>John Doe</td>
+                                                    <td>Dr. Smith</td>
+                                                    <td>10:00 AM</td>
+                                                    <td><span class="badge bg-success badge-status">Completed</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jane Smith</td>
+                                                    <td>Dr. Johnson</td>
+                                                    <td>11:30 AM</td>
+                                                    <td><span class="badge bg-warning text-dark badge-status">In Progress</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Robert Brown</td>
+                                                    <td>Dr. Williams</td>
+                                                    <td>1:15 PM</td>
+                                                    <td><span class="badge bg-info badge-status">Scheduled</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sarah Davis</td>
+                                                    <td>Dr. Anderson</td>
+                                                    <td>3:00 PM</td>
+                                                    <td><span class="badge bg-info badge-status">Scheduled</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Prescription Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Patient</th>
+                                                    <th>Medication</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>John Doe</td>
+                                                    <td>Amoxicillin</td>
+                                                    <td>10/15/2023</td>
+                                                    <td><span class="badge bg-success badge-status">Fulfilled</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jane Smith</td>
+                                                    <td>Lisinopril</td>
+                                                    <td>10/16/2023</td>
+                                                    <td><span class="badge bg-warning text-dark badge-status">Pending</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Robert Brown</td>
+                                                    <td>Metformin</td>
+                                                    <td>10/16/2023</td>
+                                                    <td><span class="badge bg-info badge-status">Processing</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sarah Davis</td>
+                                                    <td>Atorvastatin</td>
+                                                    <td>10/17/2023</td>
+                                                    <td><span class="badge bg-warning text-dark badge-status">Pending</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Onboarding Section -->
+                <div class="section" id="patient-onboarding">
+                    <h2 class="mb-4">Patient Onboarding</h2>
+                    
+                    <div class="form-section">
+                        <h4 class="mb-4">Patient Registration</h4>
+                        <form id="patientRegistrationForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Date of Birth *</label>
+                                    <input type="date" class="form-control" id="dob" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Gender *</label>
+                                    <select class="form-select" id="gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Address *</label>
+                                <input type="text" class="form-control" id="address" required>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" class="form-control" id="city" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">State *</label>
+                                    <input type="text" class="form-control" id="state" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">ZIP Code *</label>
+                                    <input type="text" class="form-control" id="zip" required>
+                                </div>
+                            </div>
+                            
+                            <h5 class="mt-4 mb-3">Medical Information</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Primary Care Physician</label>
+                                <input type="text" class="form-control" id="physician">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Known Medical Conditions</label>
+                                <textarea class="form-control" id="conditions" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Current Medications</label>
+                                <textarea class="form-control" id="medications" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Allergies</label>
+                                <textarea class="form-control" id="allergies" rows="2"></textarea>
+                            </div>
+                            
+                            <h5 class="mt-4 mb-3">Insurance Information</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Insurance Provider</label>
+                                    <input type="text" class="form-control" id="insuranceProvider">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Policy Number</label>
+                                    <input type="text" class="form-control" id="policyNumber">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Register Patient</button>
+                        </form>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4 class="mb-4">Appointment Scheduling</h4>
+                        <form id="appointmentForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Patient *</label>
+                                    <select class="form-select" id="appointmentPatient" required>
+                                        <option value="">Select Patient</option>
+                                        <option value="1">John Doe</option>
+                                        <option value="2">Jane Smith</option>
+                                        <option value="3">Robert Brown</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Provider *</label>
+                                    <select class="form-select" id="appointmentProvider" required>
+                                        <option value="">Select Provider</option>
+                                        <option value="1">Dr. Smith (Cardiology)</option>
+                                        <option value="2">Dr. Johnson (Pediatrics)</option>
+                                        <option value="3">Dr. Williams (Dermatology)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Appointment Date *</label>
+                                    <input type="date" class="form-control" id="appointmentDate" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Appointment Time *</label>
+                                    <select class="form-select" id="appointmentTime" required>
+                                        <option value="">Select Time</option>
+                                        <option value="9:00">9:00 AM</option>
+                                        <option value="9:30">9:30 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="10:30">10:30 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="11:30">11:30 AM</option>
+                                        <option value="13:00">1:00 PM</option>
+                                        <option value="13:30">1:30 PM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="14:30">2:30 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="15:30">3:30 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Reason for Visit *</label>
+                                <textarea class="form-control" id="appointmentReason" rows="3" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Schedule Appointment</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Provider Portal Section -->
+                <div class="section" id="provider-portal">
+                    <h2 class="mb-4">Provider Portal</h2>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Healthcare Providers</h5>
+                            <button class="btn btn-sm btn-outline-light" id="addProviderBtn">
+                                <i class="fas fa-plus me-1"></i> Add Provider
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Specialty</th>
+                                            <th>Contact</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Dr. John Smith</td>
+                                            <td>Cardiology</td>
+                                            <td>john.smith@telemed.com</td>
+                                            <td><span class="badge bg-success badge-status">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dr. Emily Johnson</td>
+                                            <td>Pediatrics</td>
+                                            <td>emily.johnson@telemed.com</td>
+                                            <td><span class="badge bg-success badge-status">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dr. Michael Williams</td>
+                                            <td>Dermatology</td>
+                                            <td>michael.williams@telemed.com</td>
+                                            <td><span class="badge bg-warning text-dark badge-status">On Leave</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dr. Sarah Anderson</td>
+                                            <td>Neurology</td>
+                                            <td>sarah.anderson@telemed.com</td>
+                                            <td><span class="badge bg-success badge-status">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Appointment Management</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Provider</th>
+                                            <th>Date & Time</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>Dr. Smith</td>
+                                            <td>Oct 18, 2023 10:00 AM</td>
+                                            <td>Follow-up</td>
+                                            <td><span class="badge bg-info badge-status">Scheduled</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">Start</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Reschedule</button>
+                                                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jane Smith</td>
+                                            <td>Dr. Johnson</td>
+                                            <td>Oct 18, 2023 11:30 AM</td>
+                                            <td>Consultation</td>
+                                            <td><span class="badge bg-info badge-status">Scheduled</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">Start</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Reschedule</button>
+                                                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Robert Brown</td>
+                                            <td>Dr. Williams</td>
+                                            <td>Oct 19, 2023 1:15 PM</td>
+                                            <td>Consultation</td>
+                                            <td><span class="badge bg-info badge-status">Scheduled</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">Start</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Reschedule</button>
+                                                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sarah Davis</td>
+                                            <td>Dr. Anderson</td>
+                                            <td>Oct 19, 2023 3:00 PM</td>
+                                            <td>Follow-up</td>
+                                            <td><span class="badge bg-info badge-status">Scheduled</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">Start</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Reschedule</button>
+                                                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Management Section -->
+                <div class="section" id="prescription-management">
+                    <h2 class="mb-4">Prescription Management</h2>
+                    
+                    <div class="form-section">
+                        <h4 class="mb-4">Create New Prescription</h4>
+                        <form id="prescriptionForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Patient *</label>
+                                    <select class="form-select" id="prescriptionPatient" required>
+                                        <option value="">Select Patient</option>
+                                        <option value="1">John Doe</option>
+                                        <option value="2">Jane Smith</option>
+                                        <option value="3">Robert Brown</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Provider *</label>
+                                    <select class="form-select" id="prescriptionProvider" required>
+                                        <option value="">Select Provider</option>
+                                        <option value="1">Dr. Smith</option>
+                                        <option value="2">Dr. Johnson</option>
+                                        <option value="3">Dr. Williams</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Medication Name *</label>
+                                <input type="text" class="form-control" id="medicationName" required>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Dosage *</label>
+                                    <input type="text" class="form-control" id="dosage" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Frequency *</label>
+                                    <select class="form-select" id="frequency" required>
+                                        <option value="">Select Frequency</option>
+                                        <option value="once">Once daily</option>
+                                        <option value="twice">Twice daily</option>
+                                        <option value="thrice">Three times daily</option>
+                                        <option value="four">Four times daily</option>
+                                        <option value="asneeded">As needed</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Duration *</label>
+                                    <input type="text" class="form-control" id="duration" placeholder="e.g., 10 days" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Instructions</label>
+                                <textarea class="form-control" id="instructions" rows="3" placeholder="Take with food, avoid alcohol, etc."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Additional Notes</label>
+                                <textarea class="form-control" id="prescriptionNotes" rows="2"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Create Prescription</button>
+                        </form>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Prescription Status Tracking</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Medication</th>
+                                            <th>Prescribing Doctor</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>Amoxicillin 500mg</td>
+                                            <td>Dr. Smith</td>
+                                            <td>10/15/2023</td>
+                                            <td><span class="badge bg-success badge-status">Fulfilled</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jane Smith</td>
+                                            <td>Lisinopril 10mg</td>
+                                            <td>Dr. Johnson</td>
+                                            <td>10/16/2023</td>
+                                            <td><span class="badge bg-warning text-dark badge-status">Pending</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Robert Brown</td>
+                                            <td>Metformin 850mg</td>
+                                            <td>Dr. Williams</td>
+                                            <td>10/16/2023</td>
+                                            <td><span class="badge bg-info badge-status">Processing</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sarah Davis</td>
+                                            <td>Atorvastatin 20mg</td>
+                                            <td>Dr. Anderson</td>
+                                            <td>10/17/2023</td>
+                                            <td><span class="badge bg-warning text-dark badge-status">Pending</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pharmacy Integration Section -->
+                <div class="section" id="pharmacy-integration">
+                    <h2 class="mb-4">Pharmacy Integration</h2>
+                    
+                    <div class="form-section">
+                        <h4 class="mb-4">Prescription Fulfillment Request</h4>
+                        <form id="pharmacyForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Prescription *</label>
+                                    <select class="form-select" id="pharmacyPrescription" required>
+                                        <option value="">Select Prescription</option>
+                                        <option value="1">John Doe - Amoxicillin 500mg</option>
+                                        <option value="2">Jane Smith - Lisinopril 10mg</option>
+                                        <option value="3">Robert Brown - Metformin 850mg</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Pharmacy *</label>
+                                    <select class="form-select" id="pharmacy" required>
+                                        <option value="">Select Pharmacy</option>
+                                        <option value="1">CVS Pharmacy</option>
+                                        <option value="2">Walgreens</option>
+                                        <option value="3">Rite Aid</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Pharmacy Address</label>
+                                <input type="text" class="form-control" id="pharmacyAddress" readonly>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Pharmacy Phone</label>
+                                    <input type="text" class="form-control" id="pharmacyPhone" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="pharmacyStatus" required>
+                                        <option value="pending">Pending</option>
+                                        <option value="sent">Sent to Pharmacy</option>
+                                        <option value="ready">Ready for Pickup</option>
+                                        <option value="fulfilled">Fulfilled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Notes for Pharmacy</label>
+                                <textarea class="form-control" id="pharmacyNotes" rows="3"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Submit Request</button>
+                        </form>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Pharmacy Network</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Pharmacy Name</th>
+                                            <th>Address</th>
+                                            <th>Phone</th>
+                                            <th>Hours</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>CVS Pharmacy</td>
+                                            <td>123 Main St, Anytown</td>
+                                            <td>(555) 123-4567</td>
+                                            <td>8AM-10PM</td>
+                                            <td><span class="badge bg-success badge-status">Active</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Walgreens</td>
+                                            <td>456 Oak St, Anytown</td>
+                                            <td>(555) 987-6543</td>
+                                            <td>24/7</td>
+                                            <td><span class="badge bg-success badge-status">Active</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rite Aid</td>
+                                            <td>789 Pine St, Anytown</td>
+                                            <td>(555) 456-7890</td>
+                                            <td>8AM-9PM</td>
+                                            <td><span class="badge bg-success badge-status">Active</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Section -->
+                <div class="section" id="billing">
+                    <h2 class="mb-4">Billing & Subscription</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h4 class="mb-4">Subscription Management</h4>
+                                <form id="subscriptionForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Plan</label>
+                                        <div class="alert alert-info">
+                                            <strong>Professional Plan</strong> - $99/month
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Change Plan</label>
+                                        <select class="form-select" id="subscriptionPlan">
+                                            <option value="basic">Basic Plan - $49/month</option>
+                                            <option value="professional" selected>Professional Plan - $99/month</option>
+                                            <option value="enterprise">Enterprise Plan - $199/month</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Billing Cycle</label>
+                                        <select class="form-select" id="billingCycle">
+                                            <option value="monthly">Monthly</option>
+                                            <option value="annual">Annual (Save 15%)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="autoRenew" checked>
+                                        <label class="form-check-label" for="autoRenew">Auto-renew subscription</label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">Update Subscription</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h4 class="mb-4">Payment Method</h4>
+                                <form id="paymentForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Card Number</label>
+                                        <input type="text" class="form-control" placeholder="**** **** **** 1234" readonly>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Expiration Date</label>
+                                            <input type="text" class="form-control" placeholder="12/25" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Security Code</label>
+                                            <input type="text" class="form-control" placeholder="***" readonly>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="button" class="btn btn-outline-primary">Update Payment Method</button>
+                                </form>
+                                
+                                <div class="mt-4">
+                                    <h5>Billing History</h5>
+                                    <div class="list-group">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">October 2023 Invoice</h6>
+                                                <small>$99.00</small>
+                                            </div>
+                                            <small class="text-muted">Paid on Oct 1, 2023</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">September 2023 Invoice</h6>
+                                                <small>$99.00</small>
+                                            </div>
+                                            <small class="text-muted">Paid on Sep 1, 2023</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">August 2023 Invoice</h6>
+                                                <small>$99.00</small>
+                                            </div>
+                                            <small class="text-muted">Paid on Aug 1, 2023</small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div class="section" id="analytics">
+                    <h2 class="mb-4">Analytics & Reporting</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Patient Visits Overview</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="visitsChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Appointment Types</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="appointmentTypesChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Revenue Overview</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="revenueChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Prescription Statistics</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="prescriptionStatsChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Key Performance Indicators</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h3>92%</h3>
+                                    <p>Patient Satisfaction</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3>15 min</h3>
+                                    <p>Average Wait Time</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3>87%</h3>
+                                    <p>Appointment Attendance</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3>24 hrs</h3>
+                                    <p>Avg. Prescription Fulfillment</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Notifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">New Patient Registration</h6>
+                                <small>10 mins ago</small>
+                            </div>
+                            <p class="mb-1">John Doe has completed registration.</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Appointment Reminder</h6>
+                                <small>1 hour ago</small>
+                            </div>
+                            <p class="mb-1">Jane Smith has an appointment tomorrow at 11:30 AM.</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Prescription Ready</h6>
+                                <small>2 hours ago</small>
+                            </div>
+                            <p class="mb-1">Robert Brown's prescription is ready for pickup.</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Mark all as read</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">System Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="settingsForm">
+                        <div class="mb-3">
+                            <label class="form-label">Theme</label>
+                            <select class="form-select" id="theme">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="auto">Auto (System)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Notifications</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                <label class="form-check-label" for="emailNotifications">
+                                    Email Notifications
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pushNotifications" checked>
+                                <label class="form-check-label" for="pushNotifications">
+                                    Push Notifications
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Date Format</label>
+                            <select class="form-select" id="dateFormat">
+                                <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                                <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                                <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveSettings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize variables
+        let patients = [];
+        let appointments = [];
+        let prescriptions = [];
+        
+        // DOM Ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navigation
+            initNavigation();
+            
+            // Initialize forms
+            initForms();
+            
+            // Initialize modals
+            initModals();
+            
+            // Initialize charts
+            initCharts();
+            
+            // Load sample data
+            loadSampleData();
+        });
+        
+        // Navigation functionality
+        function initNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link[data-section]');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links and sections
+                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Show corresponding section
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+        }
+        
+        // Form functionality
+        function initForms() {
+            // Patient Registration Form
+            const patientForm = document.getElementById('patientRegistrationForm');
+            if (patientForm) {
+                patientForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const firstName = document.getElementById('firstName').value;
+                    const lastName = document.getElementById('lastName').value;
+                    const email = document.getElementById('email').value;
+                    
+                    // Create patient object
+                    const patient = {
+                        id: Date.now(),
+                        firstName,
+                        lastName,
+                        email,
+                        dob: document.getElementById('dob').value,
+                        gender: document.getElementById('gender').value,
+                        phone: document.getElementById('phone').value,
+                        address: document.getElementById('address').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        zip: document.getElementById('zip').value,
+                        physician: document.getElementById('physician').value,
+                        conditions: document.getElementById('conditions').value,
+                        medications: document.getElementById('medications').value,
+                        allergies: document.getElementById('allergies').value,
+                        insuranceProvider: document.getElementById('insuranceProvider').value,
+                        policyNumber: document.getElementById('policyNumber').value,
+                        status: 'active',
+                        dateCreated: new Date().toLocaleDateString()
+                    };
+                    
+                    // Add to patients array
+                    patients.push(patient);
+                    
+                    // Show success message
+                    alert(`Patient ${firstName} ${lastName} has been successfully registered!`);
+                    
+                    // Reset form
+                    patientForm.reset();
+                });
+            }
+            
+            // Appointment Form
+            const appointmentForm = document.getElementById('appointmentForm');
+            if (appointmentForm) {
+                appointmentForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const patientId = document.getElementById('appointmentPatient').value;
+                    const providerId = document.getElementById('appointmentProvider').value;
+                    const date = document.getElementById('appointmentDate').value;
+                    const time = document.getElementById('appointmentTime').value;
+                    const reason = document.getElementById('appointmentReason').value;
+                    
+                    // Get patient name
+                    const patientSelect = document.getElementById('appointmentPatient');
+                    const patientName = patientSelect.options[patientSelect.selectedIndex].text;
+                    
+                    // Get provider name
+                    const providerSelect = document.getElementById('appointmentProvider');
+                    const providerName = providerSelect.options[providerSelect.selectedIndex].text;
+                    
+                    // Create appointment object
+                    const appointment = {
+                        id: Date.now(),
+                        patientId,
+                        patientName,
+                        providerId,
+                        providerName,
+                        date,
+                        time,
+                        reason,
+                        status: 'scheduled',
+                        dateCreated: new Date().toLocaleDateString()
+                    };
+                    
+                    // Add to appointments array
+                    appointments.push(appointment);
+                    
+                    // Show success message
+                    alert(`Appointment for ${patientName} with ${providerName} has been successfully scheduled!`);
+                    
+                    // Reset form
+                    appointmentForm.reset();
+                });
+            }
+            
+            // Prescription Form
+            const prescriptionForm = document.getElementById('prescriptionForm');
+            if (prescriptionForm) {
+                prescriptionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const patientId = document.getElementById('prescriptionPatient').value;
+                    const providerId = document.getElementById('prescriptionProvider').value;
+                    const medication = document.getElementById('medicationName').value;
+                    const dosage = document.getElementById('dosage').value;
+                    const frequency = document.getElementById('frequency').value;
+                    const duration = document.getElementById('duration').value;
+                    const instructions = document.getElementById('instructions').value;
+                    const notes = document.getElementById('prescriptionNotes').value;
+                    
+                    // Get patient name
+                    const patientSelect = document.getElementById('prescriptionPatient');
+                    const patientName = patientSelect.options[patientSelect.selectedIndex].text;
+                    
+                    // Get provider name
+                    const providerSelect = document.getElementById('prescriptionProvider');
+                    const providerName = providerSelect.options[providerSelect.selectedIndex].text;
+                    
+                    // Create prescription object
+                    const prescription = {
+                        id: Date.now(),
+                        patientId,
+                        patientName,
+                        providerId,
+                        providerName,
+                        medication,
+                        dosage,
+                        frequency,
+                        duration,
+                        instructions,
+                        notes,
+                        status: 'pending',
+                        dateCreated: new Date().toLocaleDateString()
+                    };
+                    
+                    // Add to prescriptions array
+                    prescriptions.push(prescription);
+                    
+                    // Show success message
+                    alert(`Prescription for ${patientName} has been successfully created!`);
+                    
+                    // Reset form
+                    prescriptionForm.reset();
+                });
+            }
+            
+            // Pharmacy Form
+            const pharmacyForm = document.getElementById('pharmacyForm');
+            if (pharmacyForm) {
+                // Update pharmacy details when selection changes
+                const pharmacySelect = document.getElementById('pharmacy');
+                if (pharmacySelect) {
+                    pharmacySelect.addEventListener('change', function() {
+                        const addressField = document.getElementById('pharmacyAddress');
+                        const phoneField = document.getElementById('pharmacyPhone');
+                        
+                        if (this.value === '1') {
+                            addressField.value = '123 Main St, Anytown';
+                            phoneField.value = '(555) 123-4567';
+                        } else if (this.value === '2') {
+                            addressField.value = '456 Oak St, Anytown';
+                            phoneField.value = '(555) 987-6543';
+                        } else if (this.value === '3') {
+                            addressField.value = '789 Pine St, Anytown';
+                            phoneField.value = '(555) 456-7890';
+                        } else {
+                            addressField.value = '';
+                            phoneField.value = '';
+                        }
+                    });
+                }
+                
+                pharmacyForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const prescriptionId = document.getElementById('pharmacyPrescription').value;
+                    const pharmacyId = document.getElementById('pharmacy').value;
+                    const status = document.getElementById('pharmacyStatus').value;
+                    const notes = document.getElementById('pharmacyNotes').value;
+                    
+                    // Get prescription details
+                    const prescriptionSelect = document.getElementById('pharmacyPrescription');
+                    const prescriptionText = prescriptionSelect.options[prescriptionSelect.selectedIndex].text;
+                    
+                    // Get pharmacy details
+                    const pharmacySelect = document.getElementById('pharmacy');
+                    const pharmacyText = pharmacySelect.options[pharmacySelect.selectedIndex].text;
+                    
+                    // Show success message
+                    alert(`Prescription ${prescriptionText} has been sent to ${pharmacyText} successfully!`);
+                    
+                    // Reset form
+                    pharmacyForm.reset();
+                });
+            }
+            
+            // Subscription Form
+            const subscriptionForm = document.getElementById('subscriptionForm');
+            if (subscriptionForm) {
+                subscriptionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const plan = document.getElementById('subscriptionPlan').value;
+                    const cycle = document.getElementById('billingCycle').value;
+                    const autoRenew = document.getElementById('autoRenew').checked;
+                    
+                    // Show success message
+                    alert(`Subscription has been updated to ${plan} with ${cycle} billing!`);
+                });
+            }
+        }
+        
+        // Modal functionality
+        function initModals() {
+            // Notification modal
+            const notificationBtn = document.getElementById('notificationBtn');
+            if (notificationBtn) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+                    notificationModal.show();
+                });
+            }
+            
+            // Settings modal
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
+                    settingsModal.show();
+                });
+            }
+            
+            // Save settings
+            const saveSettingsBtn = document.getElementById('saveSettings');
+            if (saveSettingsBtn) {
+                saveSettingsBtn.addEventListener('click', function() {
+                    alert('Settings have been saved successfully!');
+                    const settingsModal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                    settingsModal.hide();
+                });
+            }
+            
+            // Add provider button
+            const addProviderBtn = document.getElementById('addProviderBtn');
+            if (addProviderBtn) {
+                addProviderBtn.addEventListener('click', function() {
+                    alert('Add new provider functionality would open here.');
+                });
+            }
+        }
+        
+        // Chart functionality
+        function initCharts() {
+            // Check if we're on the analytics page
+            const visitsChart = document.getElementById('visitsChart');
+            if (visitsChart) {
+                // Patient Visits Chart
+                new Chart(visitsChart, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                        datasets: [{
+                            label: 'Patient Visits',
+                            data: [65, 59, 80, 81, 56, 55, 72, 78, 80, 85],
+                            borderColor: '#2c6bac',
+                            tension: 0.1,
+                            fill: true,
+                            backgroundColor: 'rgba(44, 107, 172, 0.1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                // Appointment Types Chart
+                const appointmentTypesChart = document.getElementById('appointmentTypesChart');
+                new Chart(appointmentTypesChart, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Consultation', 'Follow-up', 'Emergency', 'Routine'],
+                        datasets: [{
+                            data: [45, 30, 10, 15],
+                            backgroundColor: [
+                                '#2c6bac',
+                                '#4ca1af',
+                                '#dc3545',
+                                '#ffc107'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                // Revenue Chart
+                const revenueChart = document.getElementById('revenueChart');
+                new Chart(revenueChart, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: [12500, 19000, 18000, 15000, 22000, 19500, 23000, 24500, 21000, 25500],
+                            backgroundColor: '#4ca1af'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                // Prescription Stats Chart
+                const prescriptionStatsChart = document.getElementById('prescriptionStatsChart');
+                new Chart(prescriptionStatsChart, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Fulfilled', 'Processing', 'Pending'],
+                        datasets: [{
+                            data: [65, 20, 15],
+                            backgroundColor: [
+                                '#28a745',
+                                '#17a2b8',
+                                '#ffc107'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+        }
+        
+        // Load sample data
+        function loadSampleData() {
+            // Sample patients
+            patients = [
+                {
+                    id: 1,
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    email: 'john.doe@example.com',
+                    dob: '1985-05-15',
+                    gender: 'male',
+                    phone: '(555) 123-4567',
+                    address: '123 Main St',
+                    city: 'Anytown',
+                    state: 'CA',
+                    zip: '12345',
+                    status: 'active'
+                },
+                {
+                    id: 2,
+                    firstName: 'Jane',
+                    lastName: 'Smith',
+                    email: 'jane.smith@example.com',
+                    dob: '1990-08-22',
+                    gender: 'female',
+                    phone: '(555) 987-6543',
+                    address: '456 Oak St',
+                    city: 'Anytown',
+                    state: 'CA',
+                    zip: '12345',
+                    status: 'active'
+                },
+                {
+                    id: 3,
+                    firstName: 'Robert',
+                    lastName: 'Brown',
+                    email: 'robert.brown@example.com',
+                    dob: '1978-12-03',
+                    gender: 'male',
+                    phone: '(555) 456-7890',
+                    address: '789 Pine St',
+                    city: 'Anytown',
+                    state: 'CA',
+                    zip: '12345',
+                    status: 'active'
+                }
+            ];
+            
+            // Sample appointments
+            appointments = [
+                {
+                    id: 1,
+                    patientId: 1,
+                    patientName: 'John Doe',
+                    providerId: 1,
+                    providerName: 'Dr. Smith',
+                    date: '2023-10-18',
+                    time: '10:00',
+                    reason: 'Follow-up consultation',
+                    status: 'completed'
+                },
+                {
+                    id: 2,
+                    patientId: 2,
+                    patientName: 'Jane Smith',
+                    providerId: 2,
+                    providerName: 'Dr. Johnson',
+                    date: '2023-10-18',
+                    time: '11:30',
+                    reason: 'Initial consultation',
+                    status: 'scheduled'
+                },
+                {
+                    id: 3,
+                    patientId: 3,
+                    patientName: 'Robert Brown',
+                    providerId: 3,
+                    providerName: 'Dr. Williams',
+                    date: '2023-10-19',
+                    time: '13:15',
+                    reason: 'Skin condition',
+                    status: 'scheduled'
+                }
+            ];
+            
+            // Sample prescriptions
+            prescriptions = [
+                {
+                    id: 1,
+                    patientId: 1,
+                    patientName: 'John Doe',
+                    providerId: 1,
+                    providerName: 'Dr. Smith',
+                    medication: 'Amoxicillin',
+                    dosage: '500mg',
+                    frequency: 'twice',
+                    duration: '10 days',
+                    status: 'fulfilled'
+                },
+                {
+                    id: 2,
+                    patientId: 2,
+                    patientName: 'Jane Smith',
+                    providerId: 2,
+                    providerName: 'Dr. Johnson',
+                    medication: 'Lisinopril',
+                    dosage: '10mg',
+                    frequency: 'once',
+                    duration: '30 days',
+                    status: 'pending'
+                },
+                {
+                    id: 3,
+                    patientId: 3,
+                    patientName: 'Robert Brown',
+                    providerId: 3,
+                    providerName: 'Dr. Williams',
+                    medication: 'Metformin',
+                    dosage: '850mg',
+                    frequency: 'twice',
+                    duration: '30 days',
+                    status: 'processing'
+                }
+            ];
+        }
+    </script>
+</body>
+</html>
